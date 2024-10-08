@@ -1,7 +1,10 @@
+from datetime import datetime, timedelta
 import pytest
 from django.test.client import Client
 from news.forms import BAD_WORDS
 from news.models import News, Comment
+from django.conf import settings
+from django.utils import timezone
 
 
 @pytest.fixture
@@ -69,3 +72,29 @@ def bad_words():
     return {
         'text': f'Какой-то текст, {BAD_WORDS[0]}, еще текст',
     }
+
+
+@pytest.fixture
+def many_news():
+    today = datetime.today()
+    News.objects.bulk_create(
+        News(
+            title=f'Новость {index}',
+            text='Просто текст.',
+            date=today - timedelta(days=index),
+        )
+        for index in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1)
+    )
+
+
+@pytest.fixture
+def many_comment(news, author):
+    now = timezone.now()
+    for index in range(10):
+        comment = Comment.objects.create(
+            news=news,
+            author=author,
+            text=f'Tекст {index}',
+        )
+        comment.created = now + timedelta(days=index)
+        comment.save()
