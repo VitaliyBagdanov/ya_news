@@ -1,10 +1,12 @@
 from datetime import datetime, timedelta
+
 import pytest
-from django.test.client import Client
-from news.forms import BAD_WORDS
-from news.models import News, Comment
 from django.conf import settings
+from django.test.client import Client
 from django.utils import timezone
+
+from news.forms import BAD_WORDS
+from news.models import Comment, News
 
 
 @pytest.fixture
